@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Reminders</h2>
+  <ul>
+    {% for reminder in object_list %}
+      <li>{{ reminder.id }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

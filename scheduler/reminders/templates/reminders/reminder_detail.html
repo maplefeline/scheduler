@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ object.id }}</h1>
+  <p>Date: {{ object.date|date }}</p>
+  <p>Time: {{ object.date|time }}</p>
+{% endblock %}
