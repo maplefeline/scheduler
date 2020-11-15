@@ -16,6 +16,8 @@ from os import environ
 from pathlib import Path
 from typing import List
 
+import dj_database_url  # type: ignore
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -81,6 +83,23 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+# Support all Heroku databases.
+for (env, url) in environ.items():  # pragma: no cover
+    if env.startswith("HEROKU_POSTGRESQL_"):
+        db_color = env.split("_")[2].lower()
+        DATABASES[db_color] = dj_database_url.parse(url)
+        DATABASES[db_color].update(
+            {
+                "ENGINE": "django.db.backends.postgresql",
+            }
+        )
+if "DATABASE_URL" in environ:  # pragma: no cover
+    DATABASES["default"] = dj_database_url.config()
+    DATABASES["default"].update(
+        {
+            "ENGINE": "django.db.backends.postgresql",
+        }
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -96,4 +115,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
